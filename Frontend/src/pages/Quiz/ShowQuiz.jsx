@@ -131,6 +131,8 @@ const ShowQuiz = () => {
     setTimeout(() => handleNextQuestion(), 1500);
   };
 
+
+
   const handleAnswerSelect = (index) => {
     if (isAnswered) return;
     clearInterval(timerRef.current);
@@ -139,6 +141,8 @@ const ShowQuiz = () => {
     setUserAnswers((prev) => ({ ...prev, [currentQuestion]: index }));
   };
 
+
+  
   const handleNextQuestion = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion((prev) => prev + 1);
