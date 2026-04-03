@@ -1,52 +1,13 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import {connectDB} from './config/db.js'
-import authRouter from './routers/authRouters.js'
-import resultRouter from "./routers/resultRoutes.js";
-import questionRouter from './routers/questionRouters.js'
-import noteRouter from './routers/noteRouter.js'
-import aiRouter from './routers/aiRouters.js'
-
-dotenv.config();
-console.log("JWT_SECRET loaded:", !!process.env.JWT_SECRET);
+import "dotenv/config";
+import {connectDB} from './src/config/db.js'
+import app from "./src/app.js";
 
 
-const app = express();
-const PORT = process.env.PORT || 4000;
 
-
-app.use(
-    cors({
-        origin: process.env.CLIENT_URL || '*',
-        methods: ["GET", "POST", "PUT", "DELETE"],
-        allowedHeaders: ["Content-Type", "Authorization"]
-    })
-);
-
-
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const PORT = process.env.PORT || 3000;
 
 
 connectDB();
-
-
-app.use('/api/auth' , authRouter);
-app.use('/api/results' , resultRouter)
-app.use('/api/questions', questionRouter);
-app.use('/api/notes', noteRouter)
-app.use('/api/ai/analyze' , aiRouter)
-
-
-
-
-
-
-app.get("/", (req, res) => {
-  res.json({ message: "Hello from Express!" });
-});
 
 
 
