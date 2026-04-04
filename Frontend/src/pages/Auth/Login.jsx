@@ -4,7 +4,7 @@ import { useAuth } from "../../hook/useAuth";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema } from "../../validation/authValidation.js"
+import { loginSchema } from "../../validator/authValidator.js"
 
 const Login = () => {
   const { handleLogin, loading } = useAuth();

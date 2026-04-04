@@ -17,6 +17,7 @@ export const useAuth = () => {
 
     }catch(err){
       console.log('register err' , err)
+      throw err
     }finally{
        setLoading(false);
     }

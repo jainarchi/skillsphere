@@ -1,6 +1,9 @@
 import express from 'express';
 import {login , register , getMe , logout} from '../controllers/authController.js'
 import userAuth from '../middlewares/auth.js';
+import {registerValidator , loginValidator} from '../validators/authValidator.js'
+import { validate } from '../middlewares/validator.js';
+
 
 const router = express.Router();
 
@@ -10,14 +13,14 @@ const router = express.Router();
  * @access Public
  */
 
-router.post('/register' , register)
+router.post('/register' , registerValidator , validate , register)
 /**
  * @desc Login a user
  * @route POST /api/auth/login
  * @access Public
  */
 
-router.post('/login' , login)
+router.post('/login' , loginValidator, validate ,  login)
 
 
 /**

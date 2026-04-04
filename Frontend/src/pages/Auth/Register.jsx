@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hook/useAuth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema } from "../../validation/authValidation.js"
+import { registerSchema } from "../../validator/authValidator.js"
 
 const Register = () => {
   const { handleRegister, loading } = useAuth();
@@ -12,16 +12,22 @@ const Register = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm({
     resolver: zodResolver(registerSchema),
   });
 
+
+
   const onSubmit = async (data) => {
+  
     try {
       await handleRegister(data);
       navigate("/");
     } catch (err) {
-      console.log(err);
+      console.log(err.response)
+        setError("root", 
+          { message: err.response?.data?.message || "Registration failed" });
     }
   }
 
@@ -35,6 +41,10 @@ const Register = () => {
         </h1>
 
         <p  className="font-semibold mb-6 text-center text-gray-500">Start your journey to become a tech master!</p>
+
+        {errors.root && (
+          <p className="text-red-500 text-sm">{errors.root.message}</p>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           
@@ -55,7 +65,7 @@ const Register = () => {
           <div>
             <label className="block mb-1 font-medium">Email</label>
             <input
-            placeholder="you@example.com"
+              placeholder="you@example.com"
               {...register("email")}
               className="w-full border rounded px-3 py-2"
             />
