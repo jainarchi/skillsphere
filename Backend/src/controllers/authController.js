@@ -26,7 +26,12 @@ export const register = async (req, res) => {
       expiresIn: process.env.TOKEN_EXPIRES_IN,
     });
 
-    res.cookie("token", token, { httpOnly: true });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     return res.status(201).json({
       success: true,
@@ -71,7 +76,12 @@ export const login = async (req, res) => {
       expiresIn: process.env.TOKEN_EXPIRES_IN,
     });
 
-    res.cookie("token", token, { httpOnly: true });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     return res.status(200).json({
       success: true,
@@ -111,20 +121,14 @@ export const getMe = async (req, res) => {
   }
 };
 
-
-
-
 export const logout = async (req, res) => {
   try {
-
     res.clearCookie("token");
 
     return res.status(200).json({
       success: true,
       message: "Logout successful",
     });
-
-
   } catch (err) {
     console.error("Login error:", err);
     return res
