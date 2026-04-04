@@ -42,7 +42,7 @@ const Login = () => {
 
         {/* Backend / global error */}
         {errors.root && (
-          <p className="text-red-500 text-center mb-4">
+          <p className="text-red-500 text-center mb-2">
             {errors.root.message}
           </p>
         )}

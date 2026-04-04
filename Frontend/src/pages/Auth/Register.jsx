@@ -43,7 +43,7 @@ const Register = () => {
         <p  className="font-semibold mb-6 text-center text-gray-500">Start your journey to become a tech master!</p>
 
         {errors.root && (
-          <p className="text-red-500 text-sm">{errors.root.message}</p>
+          <p className="text-red-500 text-sm text-center mb-2">{errors.root.message}</p>
         )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
