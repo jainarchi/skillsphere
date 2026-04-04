@@ -2,20 +2,21 @@ import { LogOut } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-
+import { useAuth } from '../../hook/useAuth';
 
 
 const NavbarRight = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, logout } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
+  const {handleLogout} = useAuth()
 
-  const handleLogout = () => {
-    logout();
+  const logoutUser = async() => {
+    await handleLogout()
     navigate("/");
   };
 
   const handleNotes = () =>{
-     navigate( isLoggedIn ? '/notes' : '/login')
+     navigate( user ? '/notes' : '/login')
   }
 
 
@@ -37,7 +38,7 @@ const NavbarRight = () => {
       </button>
 
 
-      {!isLoggedIn ? (
+      {!user ? (
         <>
           <button
             className="nav-btn"
@@ -64,7 +65,7 @@ const NavbarRight = () => {
 
           <button
             className="nav-btn  flex items-center "
-            onClick={handleLogout}
+            onClick={logoutUser}
           >
             Logout <LogOut className="h-4" />
           </button>

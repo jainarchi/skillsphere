@@ -20,12 +20,12 @@ const MainPageView = () => {
           </span>
         </h1>
         <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-6 italic opacity-90">
-          Tech Quiz Master
+          Tech Master
         </h2>
 
-        <p className="text-gray-600 max-w-xl mx-auto mb-10 text-base md:text-lg font-medium leading-tight">
-          Prepare for real-world technical assessments with timed challenges,
-          in-depth analysis, and progress tracking.
+        <p className="text-gray-600 max-w-xl mx-auto mb-10 text-base md:text-lg font-medium leading-6.5">
+          Prepare for technical assessments with Timed challenges, Tab switching detection,
+          In-depth analysis, and Progress tracking.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-3xl mx-auto">

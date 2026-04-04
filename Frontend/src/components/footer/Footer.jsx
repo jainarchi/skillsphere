@@ -6,7 +6,7 @@ import { AuthContext } from "../../context/AuthContext";
 
 
 const Footer = () => {
-    const {isLoggedIn } = useContext(AuthContext);
+    const {user } = useContext(AuthContext);
 
     const currentYear = new Date().getFullYear();
 
@@ -26,9 +26,9 @@ const Footer = () => {
                     <div>
                         <h3 className="font-bold text-gray-900 mb-4">Explore</h3>
                         <ul className="space-y-3 text-sm text-gray-500">
-                            <li><Link to={isLoggedIn ? '/' : '/login'} className="hover:text-purple-600 transition-colors">All Assessments</Link></li>
-                            <li><Link to={isLoggedIn ? '/notes' : '/login'} className="hover:text-purple-600 transition-colors">Study Notes</Link></li>
-                            <li><Link to={isLoggedIn ? '/profile' : '/login'} className="hover:text-purple-600 transition-colors">Progress</Link></li>
+                            <li><Link to={user ? '/' : '/login'} className="hover:text-purple-600 transition-colors">All Assessments</Link></li>
+                            <li><Link to={user ? '/notes' : '/login'} className="hover:text-purple-600 transition-colors">Study Notes</Link></li>
+                            <li><Link to={user ? '/profile' : '/login'} className="hover:text-purple-600 transition-colors">Progress</Link></li>
                         </ul>
                     </div>
 
