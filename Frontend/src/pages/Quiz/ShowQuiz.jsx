@@ -1,11 +1,10 @@
 import { replace, useParams } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
-import { SHOW_QUIZ } from "../../utils/Path";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { createResult, getRandomQuestions } from "../../services/question.api";
 
 
 import {
@@ -22,7 +21,7 @@ import ShowResult from "./ShowResult";
 const ShowQuiz = () => {
   const navigate = useNavigate();
   const { tech, level } = useParams();
-  const {isLoggedIn}  = useContext(AuthContext)
+  const {user}  = useContext(AuthContext)
 
 
   const [questions, setQuestions] = useState([]);
@@ -81,7 +80,7 @@ const ShowQuiz = () => {
 
 
   useEffect(() => {
-    if( ! isLoggedIn){
+    if( ! user){
        navigate('/register' , {replace : true})
        return ;  
     }
@@ -89,11 +88,10 @@ const ShowQuiz = () => {
     const fetchQuestions = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${SHOW_QUIZ.QUESTION}`, {
-          params: { technology: tech, level, limit: 10 },
-        });
-        if (res.data.success) {
-          setQuestions(res.data.questions);
+        const data = await getRandomQuestions({ technology: tech, level, limit: 10 });
+
+        if (data.success) {
+          setQuestions(data.questions);
           setTimeLeft(getTimerValue());
         }
       } catch (err) {
@@ -166,23 +164,18 @@ const ShowQuiz = () => {
     if (showResults) {
       const submit = async () => {
         if (submittedRef.current || !questions.length) return;
-        const auth = JSON.parse(localStorage.getItem("auth"));
+       
         try {
           submittedRef.current = true;
-          await axios.post(
-            `${SHOW_QUIZ.RESULT}`,
-            {
+         await createResult({
               title: `${tech.toUpperCase()} - ${level} Quiz`,
               technology: tech,
               level,
               totalQuestions: questions.length,
               correct: correctCount,
               wrong: wrongCount,
-            },
-            {
-              headers: { Authorization: `Bearer ${auth?.token}` },
-            }
-          );
+           })
+           
         } catch (err) {
           console.log(err);
           submittedRef.current = false;
@@ -222,7 +215,7 @@ const ShowQuiz = () => {
     <div className="h-screen w-full flex justify-center bg-gray-50 p-4">
 
       <div
-        className="w-full md:w-[600px] p-8 bg-white rounded-2xl shadow-xl border border-purple-100 relative overflow-auto 
+        className="w-full custom-scrollbar md:w-[600px] p-8 bg-white rounded-2xl shadow-xl border border-purple-100 relative overflow-auto 
   .no-scrollbar"
       >
        

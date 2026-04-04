@@ -1,16 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AUTH_PATHS } from "../../utils/Path";
-import axios from 'axios'
 
-import { useContext } from "react";
-import { AuthContext } from '../../context/AuthContext'
+import { useAuth  } from "../../hook/useAuth";
 
 
 
 const Register = () => {
-
-  const { login } = useContext(AuthContext);
+  const { handleRegister , loading } = useAuth();
 
 
   const navigate = useNavigate();
@@ -28,24 +24,8 @@ const Register = () => {
     }
 
     try {
-      const res = await axios.post(AUTH_PATHS.REGISTER, {
-        name,
-        email,
-        password,
-      });
-      
-    const authData = {
-      token: res.data.user.token,
-      user: {
-        id: res.data.user.id,
-        name: res.data.user.name,
-        email: res.data.user.email,
-      },
-    };
-
-    login(authData); 
-    navigate("/");
-
+      await handleRegister({ name, email, password });
+      navigate("/");
 
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
@@ -57,7 +37,8 @@ const Register = () => {
   return (
     <div className="min-h-screen flex items-center justify-center page-bg">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
+        <h1 className="text-2xl pb-4 text-center text-purple-600 font-bold">SkillSphere</h1>
+          <h4 className=" font-semibold mb-6 text-center text-gray-500">Start your learning journey today</h4>
 
         {error && (
           <p className=" text-red-500 rounded mb-4  text-center">
@@ -111,6 +92,7 @@ const Register = () => {
           <button
             type="submit"
             className="btn py-2.5"
+            // disabled = {loading}
           >
             Register
           </button>

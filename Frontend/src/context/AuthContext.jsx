@@ -1,38 +1,30 @@
-import { createContext, useState, useEffect } from "react";
-
+import { createContext , useState , useEffect} from "react";
+import { getMe } from "../services/auth.api";
 export const AuthContext = createContext();
 
 
-
 export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
+    const [user, setUser] = useState(null)
+    const [loading, setLoading] = useState(true)
 
- 
-  useEffect(() => {
-    const authData = JSON.parse(localStorage.getItem("auth"));
-    if (authData?.token && authData?.user) {
-      setIsLoggedIn(true);
-      setUser(authData.user);
-    }
+
+ useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const data = await getMe();
+        setUser(data?.user);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuth();
   }, []);
 
- 
-  const login = (authData) => {
-    localStorage.setItem("auth", JSON.stringify(authData));
-    setIsLoggedIn(true);
-    setUser(authData.user);
-  };
-
-
-  const logout = () => {
-    localStorage.removeItem("auth");
-    setIsLoggedIn(false);
-    setUser(null);
-  };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+    <AuthContext.Provider value={{user , setUser , loading , setLoading}}>
       {children}
     </AuthContext.Provider>
   );

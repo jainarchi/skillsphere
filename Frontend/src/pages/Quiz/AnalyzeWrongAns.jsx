@@ -1,11 +1,10 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect, useContext } from 'react';
 import { BrainCircuit, ChevronLeft, Save, Loader2, Sparkles } from 'lucide-react';
 import { toast } from "react-toastify";
-import { AI_ANALYZE, NOTE_PATHS } from '../../utils/Path';
-
-
+import { aiAnalyzeWrongAnswers } from '../../services/question.api';
+import { AuthContext } from '../../context/AuthContext';
+import { createNote } from '../../services/notes.api'
 
 
 const AnalyzeWrongAns = () => {
@@ -15,31 +14,21 @@ const AnalyzeWrongAns = () => {
 
   const [aiSummary, setAiSummary] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-
+  const {user} = useContext(AuthContext)
 
 
   useEffect(() => {
     const fetchAISummary = async () => {
       if (wrongAnsArr.length === 0) return;
-
-       const auth = JSON.parse(localStorage.getItem('auth')); 
-       const token = auth?.token ;
-       console.log( 'token' , !!token);
+      if(!user) {
+        navigate('/login')
+      }
       
       try {
         setIsGenerating(true);
-        const res = await axios.post(
-          `${AI_ANALYZE.WRONG_ANS}`, 
-          { wrongAnsArr },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
-
+        const data = await aiAnalyzeWrongAnswers( wrongAnsArr);
         console.log('summary generated')
-        setAiSummary(res.data.summary);
+        setAiSummary(data.summary);
 
       } catch (err) {
         console.error("AI Generation Error:", err);
@@ -57,14 +46,14 @@ const AnalyzeWrongAns = () => {
 
   const handleSaveToNotes = async () => {
     try {
-      const auth = JSON.parse(localStorage.getItem("auth"));
-      await axios.post(`${NOTE_PATHS.NOTES}`, {
+      
+      await createNote({
         title: `AI Analysis: ${wrongAnsArr[0]?.tech || 'Quiz'}`,
         content: aiSummary,
         category: "AI Generated"
-      }, {
-        headers: { Authorization: `Bearer ${auth?.token}` }
-      });
+      })
+
+       
       toast.success("AI Summary saved to your Personal Notes!");
     } catch (err) {
       toast.error("failed to save");
@@ -81,19 +70,20 @@ const AnalyzeWrongAns = () => {
 
    <div className=' bg-white sticky top-0 z-50'>
         <div className="max-w-4xl mx-auto flex justify-between items-center gap-6 p-2">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-0.5 text-gray-500 hover:text-purple-600 font-bold transition-all">
-            <ChevronLeft size={16} /> Back
+          <button onClick={() => navigate('/')} className="flex items-center gap-0.5 text-gray-500 hover:text-purple-600 font-bold transition-all">
+            <ChevronLeft size={16} />Home
           </button>
           <div className="flex items-center gap-1">
             <Sparkles className="text-purple-600" size={24} />
             <h1 className="text-xl font-black text-gray-800 tracking-tight text-center">AI SMART GUIDE</h1>
           </div>
+
           <button 
             disabled={isGenerating || !aiSummary}
             onClick={handleSaveToNotes}
             className="btn active:scale-95 transition-all"
           >
-            <Save size={18} /> Save
+            <Save size={16} /> Save
           </button>
         </div>
         </div>

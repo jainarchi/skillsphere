@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Trash2, ChevronLeft, Brain, BookMarked, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { NOTE_PATHS } from "../utils/Path";
 import { toast } from "react-toastify"; 
-
+import {deleteNote , createNote , getMyNotes} from '../services/notes.api'
 
 const Notes = () => {
     const [notes, setNotes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
-    const [form, setForm] = useState({ title: "", content: "", tech: "" });
+    const [form, setForm] = useState({
+        title: "", 
+        content: "", 
+        tech: "" 
+    });
    
 
     const navigate = useNavigate();
@@ -19,47 +21,39 @@ const Notes = () => {
         fetchNotes();
     }, []);
 
+
     const fetchNotes = async () => {
         try {
-            const auth = JSON.parse(localStorage.getItem("auth"));
-            const res = await axios.get(`${NOTE_PATHS.NOTES}`, {
-                headers: { Authorization: `Bearer ${auth?.token}` }
-            });
-            setNotes(res.data.notes);
+            const data = await getMyNotes(); 
+            setNotes(data.notes);
         } catch (err) {
             console.error("Error in fetching notes", err);
         } finally {
             setLoading(false);
         }
-    };
+    }
 
 
 
     const saveNote = async (e) => {
         e.preventDefault();
         try {
-            const auth = JSON.parse(localStorage.getItem("auth"));
-            const res = await axios.post(`${NOTE_PATHS.NOTES}`,
-                { ...form, isAI: false },
-                { headers: { Authorization: `Bearer ${auth?.token}` } }
-            );
-            setNotes([res.data.note, ...notes]);
-            setShowModal(false);
-            setForm({ title: "", content: "", tech: "" });
+            const data = await createNote({ ...form, isAI: false })
+
+            setNotes([data.note, ...notes])
+            setShowModal(false)
+            setForm({ title: "", content: "", tech: "" })
+
         } catch (err) {
             console.error("Server Error:", err.response?.data);
             toast.error("Error saving note: " + (err.response?.data?.message || "Internal Server Error"));
         }
     };
 
-    const deleteNote = async (id) => {
+    const deleteOneNote = async (id) => {
         if (!window.confirm("Delete this note?")) return;
         try {
-            const auth = JSON.parse(localStorage.getItem("auth"));
-            await axios.delete(`${NOTE_PATHS.NOTES}/${id}`, {
-                headers: { Authorization: `Bearer ${auth?.token}` }
-            });
-            
+            await deleteNote(id);
             setNotes(notes.filter(n => n._id !== id));
         } catch (err) {
             toast.error("Error deleting", err);
@@ -70,6 +64,7 @@ const Notes = () => {
        <>
 
             <div className="mx-auto p-3 md:px-10 flex justify-between items-center nav-bg w-full sticky top-0 z-99 shadow-xl">
+
                 <div className="flex items-center gap-1 md:gap-2">
                     <button onClick={() => navigate(-1)} className="text-slate-800 hover:text-slate-900">
                         <ChevronLeft size={20} className="text-white" />
@@ -84,7 +79,7 @@ const Notes = () => {
                 </button>
             </div>
 
-            <div className="min-h-screen bg-gray-100 text-slate-900 font-sans p-4">
+            <div className="min-h-full text-slate-900 font-sans p-4">
 
             <main className="max-w-6xl mx-auto px-0 md:px-6  pb-20">
                 {loading ? (
@@ -115,7 +110,7 @@ const Notes = () => {
                                             {note.tech || "General"}
                                         </span>
                                     </div>
-                                    <button onClick={() => deleteNote(note._id)} className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all">
+                                    <button onClick={() => deleteOneNote(note._id)} className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all">
                                         <Trash2 size={16} />
                                     </button>
                                 </div>

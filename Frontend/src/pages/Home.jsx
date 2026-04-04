@@ -6,7 +6,7 @@ import Footer from '../components/footer/Footer'
 
 const Home = () => {
   return (
-    <div>
+    <div  className="h-screen overflow-y-auto hide-scrollbar" >
         <Navbar />
         <MainPageView />
         <QuizCatagory />
