@@ -9,11 +9,11 @@ const api = axios.create({
 })
 
 
-// get rnandom questions
+// get random questions
 
 export const getRandomQuestions = async ({technology , level , limit}) =>{ 
     const response = await api.get('/api/questions' , {params : {technology , level , limit}});
-    console.log(response.data.message)
+    // console.log(response.data.message)
     return response.data
 }
 
@@ -25,7 +25,7 @@ export const getRandomQuestions = async ({technology , level , limit}) =>{
 export const createResult = async ({ title, technology, level, totalQuestions, correct, wrong }) =>{ 
 
     const response = await api.post('/api/results' , { title, technology, level, totalQuestions, correct, wrong });
-    console.log(response.data.message)
+    // console.log(response.data.message)
     return response.data
 }
 
@@ -34,7 +34,7 @@ export const createResult = async ({ title, technology, level, totalQuestions, c
 
 export const listAllResults = async () =>{ 
     const response = await api.get(`/api/results`);
-    console.log(response.data.message)
+    // console.log(response.data.message)
     return response.data
 }
 
@@ -43,6 +43,6 @@ export const listAllResults = async () =>{
 
 export const aiAnalyzeWrongAnswers = async (wrongAnsArr) =>{ 
     const response = await api.post('/api/ai/analyze/wrongans' , {wrongAnsArr});
-    console.log(response.data.message)
+    // console.log(response.data.message)
     return response.data
 }

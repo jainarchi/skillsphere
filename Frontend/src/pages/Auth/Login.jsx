@@ -14,7 +14,7 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors },
-    setError, // backend error ke liye
+    setError, 
   } = useForm({
     resolver: zodResolver(loginSchema),
   });

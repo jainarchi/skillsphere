@@ -13,7 +13,7 @@ const api = axios.create({
 
 export const createNote = async ({ title, content, tech, isAI }) => { 
     const response = await api.post('/api/notes' , { title, content, tech, isAI } );
-    console.log(response.data.message)
+    // console.log(response.data.message)
     return response.data
 }
 
@@ -22,7 +22,7 @@ export const createNote = async ({ title, content, tech, isAI }) => {
 
 export const getMyNotes = async () =>{ 
     const response = await api.get('/api/notes');
-    console.log(response.data.message)
+    // console.log(response.data.message)
     return response.data
 }
 
@@ -30,6 +30,6 @@ export const getMyNotes = async () =>{
 // delete a note
 export const deleteNote = async (id) =>{ 
     const response = await api.delete(`/api/notes/${id}`);
-    console.log(response.data.message)
+    // console.log(response.data.message)
     return response.data
 }

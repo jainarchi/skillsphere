@@ -11,13 +11,9 @@ export const useAuth = () => {
   const handleRegister = async ({ name, email, password }) => {
 
     try{
-       setLoading(true);
+    setLoading(true);
     const data = await register({ name, email, password });
     setUser(data.user);
-
-    }catch(err){
-      console.log('register err' , err)
-      throw err
     }finally{
        setLoading(false);
     }
@@ -35,10 +31,6 @@ export const useAuth = () => {
      setUser(data.user);
 
     }
-    catch(err){
-      console.log("login err" , err )
-      throw err ;
-    } 
     finally{
        setLoading(false);
     }
@@ -73,10 +65,9 @@ const handleGetMe = async () => {
       setLoading(true);
       await logout();
       setUser(null);
-      console.log("logged out");
 
     }catch(err){
-      console.log("logout err" , err)
+      console.log('logout err' , err)
     }
     finally{
         setLoading(false);
