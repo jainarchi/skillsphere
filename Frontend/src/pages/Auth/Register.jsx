@@ -1,100 +1,91 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { useAuth  } from "../../hook/useAuth";
-
-
+import { useAuth } from "../../hook/useAuth";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema } from "../../validation/authValidation.js"
 
 const Register = () => {
-  const { handleRegister , loading } = useAuth();
-
-
+  const { handleRegister, loading } = useAuth();
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(registerSchema),
+  });
 
-    if (!name || !email || !password) {
-      setError("Please fill all fields!");
-      return;
-    }
-
+  const onSubmit = async (data) => {
     try {
-      await handleRegister({ name, email, password });
+      await handleRegister(data);
       navigate("/");
-
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
+      console.log(err);
     }
+  }
 
 
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center page-bg">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-2xl pb-4 text-center text-purple-600 font-bold">SkillSphere</h1>
-          <h4 className=" font-semibold mb-6 text-center text-gray-500">Start your learning journey today</h4>
+        <h1 className="text-2xl pb-4 text-center text-purple-600 font-bold">
+          SkillSphere
+        </h1>
 
-        {error && (
-          <p className=" text-red-500 rounded mb-4  text-center">
-            {error}
-          </p>
-        )}
+        <p  className="font-semibold mb-6 text-center text-gray-500">Start your journey to become a tech master!</p>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          
+          {/* Name */}
           <div>
-            <label className="block mb-1 font-medium" htmlFor="name">
-              Name
-            </label>
+            <label className="block mb-1 font-medium">Name</label>
             <input
-              id="name"
-              type="text"
-              placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="John Doe"
+              {...register("name")}
+              className="w-full border rounded px-3 py-2"
             />
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            )}
           </div>
 
+          {/* Email */}
           <div>
-            <label className="block mb-1 font-medium" htmlFor="email">
-              Email
-            </label>
+            <label className="block mb-1 font-medium">Email</label>
             <input
-              id="email"
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="you@example.com"
+              {...register("email")}
+              className="w-full border rounded px-3 py-2"
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
           </div>
 
+          {/* Password */}
           <div>
-            <label className="block mb-1 font-medium" htmlFor="password">
-              Password
-            </label>
+            <label className="block mb-1 font-medium">Password</label>
             <input
-              id="password"
+              placeholder="Create a password"
               type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              {...register("password")}
+              className="w-full border rounded px-3 py-2"
             />
+            {errors.password && (
+              <p className="text-red-500 text-sm">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           <button
             type="submit"
+            disabled={loading}
             className="btn py-2.5"
-            // disabled = {loading}
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
 
@@ -104,7 +95,6 @@ const Register = () => {
             className="text-blue-500 cursor-pointer hover:underline"
             onClick={() => navigate("/login")}
           >
-
             Login
           </span>
         </p>

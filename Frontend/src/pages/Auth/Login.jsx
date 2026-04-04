@@ -1,89 +1,96 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogIn } from 'lucide-react';
+import { LogIn } from "lucide-react";
 import { useAuth } from "../../hook/useAuth";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema } from "../../validation/authValidation.js"
 
 const Login = () => {
   const { handleLogin, loading } = useAuth();
-
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError, // backend error ke liye
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
 
-   
-    if (!email || !password) {
-      setError("Please fill all fields!");
-      return;
+  const onSubmit = async (data) => {
+    try {
+      await handleLogin(data);
+      navigate("/");
+    } catch (err) {
+      setError("root", {
+        message: err.response?.data?.message || "Login failed",
+      });
     }
-
-
-  try {
-     await handleLogin({ email, password }); 
-     navigate("/");
-    
-
-  } catch (err) {
-    setError(
-      err.response?.data?.message || "Login failed. Try again."
-    );
-  }
-   
-   
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center page-bg">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-         <h1 className="text-2xl pb-4 text-center text-purple-600 font-bold">SkillSphere</h1>
-        <h4 className=" font-semibold mb-6 text-center text-gray-500">WellCome Back </h4>
+        <h1 className="text-2xl pb-4 text-center text-purple-600 font-bold">
+          SkillSphere
+        </h1>
+        <h4 className="font-semibold mb-6 text-center text-gray-500">
+          Welcome Back
+        </h4>
 
-        {error && (
-          <p className=" text-red-500 rounded mb-4 text-center">
-            {error}
+        {/* Backend / global error */}
+        {errors.root && (
+          <p className="text-red-500 text-center mb-4">
+            {errors.root.message}
           </p>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          
+          {/* Email */}
           <div>
-            <label className="block mb-1 font-medium" htmlFor="email">
-              Email
-            </label>
+            <label className="block mb-1 font-medium">Email</label>
             <input
-              id="email"
-              type="email"
               placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              {...register("email")}
+              className={`w-full border rounded px-3 py-2 ${
+                errors.email ? "border-red-500" : "border-gray-300"
+              }`}
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
+          {/* Password */}
           <div>
-            <label className="block mb-1 font-medium" htmlFor="password">
-              Password
-            </label>
+            <label className="block mb-1 font-medium">Password</label>
             <input
-              id="password"
               type="password"
               placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              {...register("password")}
+              className={`w-full border rounded px-3 py-2 ${
+                errors.password ? "border-red-500" : "border-gray-300"
+              }`}
             />
+            {errors.password && (
+              <p className="text-red-500 text-sm">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           <button
             type="submit"
-            className="btn py-2.5"
-              // disabled = {loading}
+            disabled={loading}
+            className="btn py-2.5 flex items-center justify-center gap-2"
           >
-            <LogIn className='icon' />
-            Login
+            <LogIn className="icon" />
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 

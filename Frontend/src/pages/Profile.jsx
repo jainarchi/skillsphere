@@ -69,7 +69,12 @@ const Profile = () => {
               <div className="w-px h-10 bg-gray-200"></div>
               <div>
                 <p className="text-2xl font-bold text-purple-700">
-                  {Math.round(
+                  {  
+                  results.length === 0 ?
+                  (
+                    0
+                  ) 
+                  : Math.round(
                     results.reduce((acc, curr) => acc + curr.score, 0) /
                       results.length,
                   )}
